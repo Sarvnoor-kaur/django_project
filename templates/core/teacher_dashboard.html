@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block title %}Teacher Dashboard – SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Welcome Header Banner -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-900 text-white p-8 sm:p-10 shadow-xl">
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold uppercase tracking-wider mb-3">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            Instructor Hub
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Welcome back, Professor {{ request.user.get_full_name|default:request.user.username }}! 🎓
+          </h1>
+          <p class="text-gray-300 text-sm sm:text-base mt-2 max-w-xl">
+            Manage your courses, publish lessons, upload notes, and review student assessment performances.
+          </p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <a href="{% url 'accounts:profile' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium transition-all duration-200">
+            <i class="bi bi-gear"></i>
+            Settings
+          </a>
+          <a href="{% url 'learning:course_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-600 hover:to-indigo-700 text-sm font-semibold shadow-md transition-all duration-200 text-white">
+            <i class="bi bi-plus-lg"></i>
+            Create Course
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Stat 1 -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all card-hover-lift">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">My Courses</span>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-lg">
+            <i class="bi bi-collection-fill"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-gray-900">{{ total_courses }}</span>
+          <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ published_courses }} Published</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">{{ draft_courses }} draft courses</p>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all card-hover-lift">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Enrolled Students</span>
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+            <i class="bi bi-people-fill"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-gray-900">{{ total_enrollments }}</span>
+          <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Total learners</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Across all courses</p>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all card-hover-lift">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Lessons Created</span>
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+            <i class="bi bi-journal-text"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-gray-900">{{ total_lessons }}</span>
+          <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Modules</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Published content units</p>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all card-hover-lift">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Quizzes & Tests</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+            <i class="bi bi-file-earmark-check-fill"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-gray-900">{{ total_quizzes }}</span>
+          <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Active</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Interactive assessments</p>
+      </div>
+    </div>
+
+    <!-- Instructor Courses Table/Cards -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">Your Curriculum & Courses</h2>
+          <p class="text-sm text-gray-500">Manage lessons, resources, and publishing status</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="{% url 'learning:teacher_course_list' %}" class="text-xs font-semibold text-brand-600 hover:text-brand-700">
+            View All Courses &rarr;
+          </a>
+        </div>
+      </div>
+
+      {% if courses %}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for course in courses %}
+        <div class="p-5 rounded-xl border border-gray-100 hover:border-brand-200 hover:shadow-md transition-all bg-gray-50/50 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start mb-3">
+              <span class="px-2.5 py-1 text-xs font-medium {% if course.status == 'PUBLISHED' %}bg-emerald-50 text-emerald-700{% else %}bg-amber-50 text-amber-700{% endif %} rounded-md">
+                {{ course.get_status_display }}
+              </span>
+              <span class="text-xs text-gray-500">{{ course.enrolled_count }} enrolled</span>
+            </div>
+            <h4 class="font-bold text-gray-900 mb-1 text-base">
+              <a href="{% url 'learning:course_detail' slug=course.slug %}" class="hover:text-brand-600 transition-colors">
+                {{ course.title }}
+              </a>
+            </h4>
+            <p class="text-xs text-gray-500 mb-4 line-clamp-2">{{ course.short_description }}</p>
+          </div>
+          
+          <div class="flex items-center justify-between text-xs pt-3 border-t border-gray-200/60 mt-2">
+            <span class="text-gray-500">{{ course.lesson_count }} Lessons</span>
+            <div class="flex items-center gap-2">
+              <a href="{% url 'learning:course_edit' slug=course.slug %}" class="text-gray-600 hover:text-gray-900 font-medium">Edit</a>
+              <span class="text-gray-300">|</span>
+              <a href="{% url 'learning:course_detail' slug=course.slug %}" class="text-brand-600 hover:text-brand-700 font-semibold">Manage &rarr;</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <!-- Empty state for new teachers -->
+      <div class="p-12 text-center rounded-2xl border border-dashed border-gray-200 space-y-4">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-brand-600 flex items-center justify-center text-3xl mx-auto">
+          <i class="bi bi-collection-play"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900">You haven't created any courses yet</h3>
+        <p class="text-sm text-gray-500 max-w-md mx-auto">
+          Design your curriculum, upload PDF guides, record lessons, and publish assessments for students.
+        </p>
+        <div class="pt-2">
+          <a href="{% url 'learning:course_create' %}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md transition-all">
+            <i class="bi bi-plus-lg"></i>
+            Create Your First Course
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Recent Student Submissions & Activity -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900">Recent Student Quiz Submissions</h3>
+          <p class="text-xs text-gray-500">Live submission tracking across your assessments</p>
+        </div>
+      </div>
+
+      {% if recent_attempts %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b border-gray-100">
+            <tr>
+              <th class="py-3 px-4">Student</th>
+              <th class="py-3 px-4">Quiz / Course</th>
+              <th class="py-3 px-4">Score</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4">Submitted At</th>
+              <th class="py-3 px-4">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for att in recent_attempts %}
+            <tr class="hover:bg-gray-50/50">
+              <td class="py-3 px-4 font-medium text-gray-900">{{ att.student.get_full_name|default:att.student.username }}</td>
+              <td class="py-3 px-4 text-gray-600">{{ att.quiz.title }} <span class="text-xs text-gray-400">({{ att.quiz.course.title }})</span></td>
+              <td class="py-3 px-4 font-bold text-gray-900">{{ att.score }}/{{ att.total_questions }} ({{ att.percentage }}%)</td>
+              <td class="py-3 px-4">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full {% if att.passed %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %}">
+                  {% if att.passed %}Passed{% else %}Failed{% endif %}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-xs text-gray-500">{{ att.submitted_at|date:"M d, Y H:i" }}</td>
+              <td class="py-3 px-4">
+                <a href="{% url 'learning:quiz_result' attempt_id=att.id %}" class="text-xs font-semibold text-brand-600 hover:text-brand-700">
+                  Review &rarr;
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-sm text-gray-500 py-6 text-center">No student quiz attempts recorded yet. As students take your tests, results will appear here in real time.</p>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

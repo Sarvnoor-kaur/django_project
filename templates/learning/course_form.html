@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_edit %}Edit Course – {{ course.title }}{% else %}Create New Course{% endif %} – SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Breadcrumb / Header -->
+    <div>
+      <a href="{% url 'learning:teacher_course_list' %}" class="inline-flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-semibold mb-2">
+        &larr; Back to Course Management
+      </a>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+        {% if is_edit %}Edit Course Details{% else %}Create New Course{% endif %}
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Configure the curriculum title, category, syllabus description, and publication status.
+      </p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+      <form method="post" enctype="multipart/form-data" class="space-y-6" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Title -->
+        <div>
+          <label for="{{ form.title.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            Course Title *
+          </label>
+          {{ form.title }}
+          {% if form.title.errors %}<p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Short Description -->
+        <div>
+          <label for="{{ form.short_description.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            Short Description *
+          </label>
+          {{ form.short_description }}
+          <p class="text-xs text-gray-400 mt-1">A 1-2 sentence preview displayed on course catalog cards.</p>
+          {% if form.short_description.errors %}<p class="text-red-500 text-xs mt-1">{{ form.short_description.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Full Description -->
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            Detailed Curriculum Overview *
+          </label>
+          {{ form.description }}
+          <p class="text-xs text-gray-400 mt-1">Explain key takeaways, target audience, and prerequisite concepts.</p>
+          {% if form.description.errors %}<p class="text-red-500 text-xs mt-1">{{ form.description.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <!-- Category -->
+          <div>
+            <label for="{{ form.category.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+              Category
+            </label>
+            {{ form.category }}
+            {% if form.category.errors %}<p class="text-red-500 text-xs mt-1">{{ form.category.errors.0 }}</p>{% endif %}
+          </div>
+
+          <!-- Difficulty -->
+          <div>
+            <label for="{{ form.difficulty_level.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+              Difficulty Level
+            </label>
+            {{ form.difficulty_level }}
+            {% if form.difficulty_level.errors %}<p class="text-red-500 text-xs mt-1">{{ form.difficulty_level.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <!-- Thumbnail -->
+        <div>
+          <label for="{{ form.thumbnail.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            Cover Thumbnail (Optional)
+          </label>
+          {{ form.thumbnail }}
+          <p class="text-xs text-gray-400 mt-1">Recommended aspect ratio: 16:9 (PNG, JPG, WebP)</p>
+          {% if form.thumbnail.errors %}<p class="text-red-500 text-xs mt-1">{{ form.thumbnail.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Publication Status -->
+        <div>
+          <label for="{{ form.status.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+            Publication Status
+          </label>
+          {{ form.status }}
+          <p class="text-xs text-gray-400 mt-1">Keep as 'Draft' while preparing lessons; change to 'Published' when ready for students.</p>
+          {% if form.status.errors %}<p class="text-red-500 text-xs mt-1">{{ form.status.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
+          <a href="{% if is_edit %}{% url 'learning:course_detail' slug=course.slug %}{% else %}{% url 'learning:teacher_course_list' %}{% endif %}"
+             class="px-5 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+            Cancel
+          </a>
+          <button type="submit" class="px-7 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-md transition-all">
+            {% if is_edit %}Save Changes{% else %}Create Course &rarr;{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

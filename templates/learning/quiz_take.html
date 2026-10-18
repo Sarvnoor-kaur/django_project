@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Taking Assessment: {{ quiz.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Header -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
+          Live Assessment
+        </span>
+        <span class="text-xs font-semibold text-gray-500">
+          Passing mark: {{ quiz.passing_percentage }}%
+        </span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">{{ quiz.title }}</h1>
+      <p class="text-xs text-gray-500">{{ course.title }} &bull; {{ questions|length }} Total Questions</p>
+    </div>
+
+    <!-- Quiz Submission Form -->
+    <form method="post" action="{% url 'learning:quiz_submit' quiz_id=quiz.id %}" id="quizForm" class="space-y-6">
+      {% csrf_token %}
+
+      {% for q in questions %}
+      <div class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm space-y-4">
+        <div class="flex items-start gap-3">
+          <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+            {{ forloop.counter }}
+          </span>
+          <h3 class="font-bold text-gray-900 text-base leading-snug">{{ q.question_text }}</h3>
+        </div>
+
+        <div class="space-y-2.5 pt-2 pl-10">
+          {% for choice in q.choices.all %}
+          <label class="flex items-center gap-3.5 p-4 rounded-2xl border border-gray-200 hover:border-brand-300 hover:bg-brand-50/30 cursor-pointer transition-all">
+            <input type="radio" name="question_{{ q.id }}" value="{{ choice.id }}"
+                   class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-gray-300">
+            <span class="text-sm text-gray-800">{{ choice.choice_text }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- Submit Footer -->
+      <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <a href="{% url 'learning:quiz_detail' quiz_id=quiz.id %}" class="text-xs font-semibold text-gray-500 hover:text-gray-800">
+          Cancel and return
+        </a>
+
+        <button type="submit" onclick="return confirm('Ready to submit your answers? Scores will be calculated immediately.');"
+                class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all">
+          Submit Assessment &rarr;
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

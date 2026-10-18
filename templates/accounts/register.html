@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block title %}Register – SmartEdu | Join the Community{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-4rem)] flex">
+  
+  <!-- Left Panel — Modern Educational SaaS Branding -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-brand-700 via-indigo-700 to-purple-900 text-white relative overflow-hidden flex-col justify-between p-12">
+    <!-- Decorative background blobs -->
+    <div class="absolute -top-12 -left-12 w-96 h-96 bg-brand-400/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-16 -right-16 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <div class="relative z-10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+          <i class="bi bi-mortarboard-fill text-xl text-white"></i>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-white">SmartEdu</span>
+      </div>
+    </div>
+
+    <div class="relative z-10 my-auto max-w-lg">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold uppercase tracking-wider mb-6 border border-white/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Join 10,000+ Learners & Instructors
+      </div>
+      <h1 class="text-4xl font-extrabold tracking-tight leading-tight mb-4">
+        Start your high-impact learning journey today.
+      </h1>
+      <p class="text-brand-100 text-base leading-relaxed mb-8">
+        Gain access to curated courses, real-time analytics, skill roadmaps, and intelligent assessments designed for your growth.
+      </p>
+
+      <div class="space-y-4">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-emerald-400 flex-shrink-0 mt-0.5">
+            <i class="bi bi-check2"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold">Self-Paced Learning Paths</h4>
+            <p class="text-xs text-brand-200">Study on any device with seamless progress syncing.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-emerald-400 flex-shrink-0 mt-0.5">
+            <i class="bi bi-check2"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold">Role-Based Experiences</h4>
+            <p class="text-xs text-brand-200">Specialized dashboards tailored for students and instructors.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-emerald-400 flex-shrink-0 mt-0.5">
+            <i class="bi bi-check2"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold">Interactive Quizzes & Certificates</h4>
+            <p class="text-xs text-brand-200">Test your mastery and showcase verified accomplishments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-10 text-xs text-brand-200">
+      &copy; 2026 SmartEdu. All rights reserved.
+    </div>
+  </div>
+
+  <!-- Right Panel — Register Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 bg-white">
+    <div class="w-full max-w-lg space-y-6">
+      
+      <div class="text-center sm:text-left">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Create your account</h2>
+        <p class="text-gray-500 text-sm mt-1">Get started with SmartEdu in less than a minute.</p>
+      </div>
+
+      <!-- Role Switcher Tabs -->
+      <div class="flex rounded-xl bg-gray-100 p-1 border border-gray-200 text-xs font-semibold" id="roleTabs">
+        <button type="button" onclick="setRole('STUDENT')" id="tabStudent"
+          class="flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 {% if selected_role != 'TEACHER' %}bg-white text-brand-700 shadow-sm font-bold{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+          <i class="bi bi-mortarboard-fill"></i>
+          Student Account
+        </button>
+        <button type="button" onclick="setRole('TEACHER')" id="tabTeacher"
+          class="flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 {% if selected_role == 'TEACHER' %}bg-white text-brand-700 shadow-sm font-bold{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+          <i class="bi bi-person-video3"></i>
+          Instructor / Teacher
+        </button>
+      </div>
+
+      <!-- Student Registration Form -->
+      <form method="post" id="studentForm" class="space-y-4 {% if selected_role == 'TEACHER' %}hidden{% endif %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="role" value="STUDENT">
+
+        {% if student_form.non_field_errors %}
+        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+          {{ student_form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div>
+          <label for="{{ student_form.username.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Username</label>
+          {{ student_form.username }}
+          {% if student_form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.username.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="{{ student_form.first_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">First Name</label>
+            {{ student_form.first_name }}
+            {% if student_form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.first_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label for="{{ student_form.last_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Last Name</label>
+            {{ student_form.last_name }}
+            {% if student_form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.last_name.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div>
+          <label for="{{ student_form.email.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Email Address</label>
+          {{ student_form.email }}
+          {% if student_form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.email.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label for="{{ student_form.password1.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Password</label>
+          {{ student_form.password1 }}
+          {% if student_form.password1.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.password1.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label for="{{ student_form.password2.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Confirm Password</label>
+          {{ student_form.password2 }}
+          {% if student_form.password2.errors %}<p class="text-red-500 text-xs mt-1">{{ student_form.password2.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm mt-2">
+          Create Student Account
+        </button>
+      </form>
+
+      <!-- Teacher Registration Form -->
+      <form method="post" id="teacherForm" class="space-y-4 {% if selected_role != 'TEACHER' %}hidden{% endif %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="role" value="TEACHER">
+
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+          <i class="bi bi-info-circle-fill text-amber-600 text-sm"></i>
+          <span>Teacher accounts can publish courses and oversee student assessments.</span>
+        </div>
+
+        {% if teacher_form.non_field_errors %}
+        <div class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+          {{ teacher_form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div>
+          <label for="{{ teacher_form.username.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Username</label>
+          {{ teacher_form.username }}
+          {% if teacher_form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.username.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="{{ teacher_form.first_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">First Name</label>
+            {{ teacher_form.first_name }}
+            {% if teacher_form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.first_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label for="{{ teacher_form.last_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Last Name</label>
+            {{ teacher_form.last_name }}
+            {% if teacher_form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.last_name.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div>
+          <label for="{{ teacher_form.email.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Instructor Email</label>
+          {{ teacher_form.email }}
+          {% if teacher_form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.email.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label for="{{ teacher_form.password1.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Password</label>
+          {{ teacher_form.password1 }}
+          {% if teacher_form.password1.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.password1.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label for="{{ teacher_form.password2.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">Confirm Password</label>
+          {{ teacher_form.password2 }}
+          {% if teacher_form.password2.errors %}<p class="text-red-500 text-xs mt-1">{{ teacher_form.password2.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-sm mt-2">
+          Create Instructor Account
+        </button>
+      </form>
+
+      <!-- Already have an account link -->
+      <div class="pt-4 border-t border-gray-100 text-center">
+        <p class="text-sm text-gray-500">
+          Already registered on SmartEdu?
+          <a href="{% url 'login' %}" class="text-brand-600 font-semibold hover:text-brand-700 ml-1">Sign In</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function setRole(role) {
+    const sForm = document.getElementById('studentForm');
+    const tForm = document.getElementById('teacherForm');
+    const tabS = document.getElementById('tabStudent');
+    const tabT = document.getElementById('tabTeacher');
+
+    if (role === 'TEACHER') {
+      sForm.classList.add('hidden');
+      tForm.classList.remove('hidden');
+      tabT.className = 'flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 bg-white text-brand-700 shadow-sm font-bold';
+      tabS.className = 'flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 text-gray-500 hover:text-gray-700';
+    } else {
+      tForm.classList.add('hidden');
+      sForm.classList.remove('hidden');
+      tabS.className = 'flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 bg-white text-brand-700 shadow-sm font-bold';
+      tabT.className = 'flex-1 py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 text-gray-500 hover:text-gray-700';
+    }
+  }
+</script>
+{% endblock %}

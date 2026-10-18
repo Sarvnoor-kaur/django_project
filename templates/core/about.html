@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}About – SmartEdu | Empowering Digital Learning{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 py-16 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+    
+    <!-- Hero Section -->
+    <div class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold uppercase tracking-wider mb-6">
+        <i class="bi bi-mortarboard-fill"></i>
+        Our Mission & Vision
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+        Building the next generation of <span class="bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">smart education</span>.
+      </h1>
+      <p class="text-lg text-gray-600 mt-6 leading-relaxed">
+        SmartEdu connects passionate educators with eager learners on a modern, flexible, and interactive SaaS platform built for the digital era.
+      </p>
+    </div>
+
+    <!-- Core Pillars Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all card-hover-lift">
+        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-2xl mb-6">
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Adaptive & Responsive</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Crafted with mobile-first modern design principles, delivering smooth interaction across mobile devices, tablets, and desktop workstations.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all card-hover-lift">
+        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl mb-6">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Enterprise Grade Security</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Powered by robust Django authentication with role-based access control, CSRF protection, and strictly isolated student and teacher workflows.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all card-hover-lift">
+        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mb-6">
+          <i class="bi bi-cpu-fill"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">AI Ready Foundation</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Architected from day one to support intelligent tutoring assistants, automated grading algorithms, and customized learning recommendations.
+        </p>
+      </div>
+    </div>
+
+    <!-- Roadmap / Phases -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 sm:p-12 shadow-sm space-y-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Platform Development Roadmap</h2>
+        <p class="text-gray-500 text-sm mt-2">Transparent milestone planning for students and institutional partners.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+        <!-- Phase 1 -->
+        <div class="p-6 rounded-2xl bg-emerald-50/60 border border-emerald-200">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Phase 1</span>
+            <span class="px-2.5 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full flex items-center gap-1">
+              <i class="bi bi-check-circle-fill"></i> Completed
+            </span>
+          </div>
+          <h4 class="font-bold text-gray-900 text-lg mb-2">Core Foundation</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Custom user authentication, role-based student and teacher accounts, secure sessions, modern SaaS styling, and responsive UI.
+          </p>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="p-6 rounded-2xl bg-brand-50/60 border border-brand-200">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-700">Phase 2</span>
+            <span class="px-2.5 py-1 text-xs font-semibold bg-brand-100 text-brand-800 rounded-full flex items-center gap-1">
+              <i class="bi bi-hourglass-split"></i> In Progress
+            </span>
+          </div>
+          <h4 class="font-bold text-gray-900 text-lg mb-2">Curriculum & Quizzes</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Course creation suite, interactive lessons, video embedding, student progress tracking, automated quizzes, and gradebooks.
+          </p>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="p-6 rounded-2xl bg-purple-50/60 border border-purple-200">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Phase 3</span>
+            <span class="px-2.5 py-1 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full flex items-center gap-1">
+              <i class="bi bi-stars"></i> Upcoming
+            </span>
+          </div>
+          <h4 class="font-bold text-gray-900 text-lg mb-2">AI Tutor & Analytics</h4>
+          <p class="text-xs text-gray-600 leading-relaxed">
+            Contextual AI study assistant, live doubt clearing, teacher analytics dashboards, and institutional grade reporting.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="rounded-3xl bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 text-white p-8 sm:p-14 text-center shadow-xl space-y-6">
+      <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Ready to begin your learning journey?</h2>
+      <p class="text-brand-100 max-w-xl mx-auto text-sm sm:text-base">
+        Join students and instructors already transforming how they acquire and share knowledge.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-2">
+        <a href="{% url 'accounts:student_register' %}" class="px-8 py-3.5 bg-white text-brand-700 font-semibold rounded-xl hover:bg-gray-100 shadow-lg transition-all text-sm">
+          Get Started as Student
+        </a>
+        <a href="{% url 'accounts:teacher_register' %}" class="px-8 py-3.5 bg-brand-500/30 hover:bg-brand-500/50 border border-white/20 text-white font-semibold rounded-xl transition-all text-sm">
+          Join as Teacher
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

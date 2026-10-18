@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Resources – {{ course.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <a href="{% url 'learning:course_detail' slug=course.slug %}" class="inline-flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-semibold mb-2">
+          &larr; Back to {{ course.title }}
+        </a>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Course Resources & Materials</h1>
+        <p class="text-gray-500 text-sm mt-1">Downloadable PDF notes, lecture slides, code repositories, and references.</p>
+      </div>
+
+      {% if is_teacher_owner %}
+      <a href="{% url 'learning:resource_create' course_slug=course.slug %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-md transition-all">
+        <i class="bi bi-cloud-arrow-up"></i> Upload Resource
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Resources List -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm">
+      {% if resources %}
+      <div class="divide-y divide-gray-100">
+        {% for res in resources %}
+        <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl flex-shrink-0 mt-0.5">
+              {% if res.file %}
+              <i class="bi bi-file-earmark-pdf-fill"></i>
+              {% else %}
+              <i class="bi bi-link-45deg"></i>
+              {% endif %}
+            </div>
+
+            <div>
+              <h4 class="font-bold text-gray-900 text-sm">{{ res.title }}</h4>
+              {% if res.description %}
+              <p class="text-xs text-gray-500 mt-0.5">{{ res.description }}</p>
+              {% endif %}
+              <div class="flex items-center gap-3 text-[11px] text-gray-400 mt-1.5">
+                {% if res.lesson %}
+                <span class="text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md font-medium">Lesson: {{ res.lesson.title }}</span>
+                {% else %}
+                <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-medium">General Course Material</span>
+                {% endif %}
+                <span>Uploaded {{ res.created_at|date:"M d, Y" }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 sm:self-center">
+            {% if res.file %}
+            <a href="{% url 'learning:download_resource' resource_id=res.id %}"
+               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition-colors">
+              <i class="bi bi-download"></i> Download
+            </a>
+            {% elif res.external_url %}
+            <a href="{{ res.external_url }}" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition-colors">
+              <i class="bi bi-box-arrow-up-right"></i> Open Link
+            </a>
+            {% endif %}
+
+            {% if is_teacher_owner %}
+            <form method="post" action="{% url 'learning:resource_delete' course_slug=course.slug resource_id=res.id %}" onsubmit="return confirm('Delete this resource?');">
+              {% csrf_token %}
+              <button type="submit" class="p-2 text-gray-400 hover:text-red-600 transition-colors" title="Delete Resource">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="py-12 text-center space-y-3">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center text-2xl mx-auto">
+          <i class="bi bi-folder2-open"></i>
+        </div>
+        <h4 class="font-bold text-gray-900 text-sm">No resources attached</h4>
+        <p class="text-xs text-gray-500">There are currently no additional files uploaded for this course.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

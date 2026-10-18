@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}{{ lesson.title }} – {{ course.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    
+    <!-- Top Bar: Course Context & Navigation -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
+      <div>
+        <a href="{% url 'learning:course_detail' slug=course.slug %}" class="inline-flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-semibold mb-1">
+          &larr; Back to {{ course.title }}
+        </a>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-brand-50 text-brand-700">
+            Lesson {{ lesson.ordering }} of {{ lessons|length }}
+          </span>
+          <span class="text-xs text-gray-400">&bull; {{ lesson.estimated_duration }} min read</span>
+        </div>
+      </div>
+
+      <!-- Mark Completed Button (Students) or Edit Button (Teacher) -->
+      <div class="flex items-center gap-3">
+        {% if is_teacher_owner %}
+        <a href="{% url 'learning:lesson_edit' course_slug=course.slug lesson_slug=lesson.slug %}" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-xs font-semibold text-gray-700 transition-colors">
+          <i class="bi bi-pencil mr-1"></i>Edit Lesson
+        </a>
+        {% elif user.is_student %}
+        <form method="post" action="{% url 'learning:toggle_lesson_progress' lesson_id=lesson.id %}">
+          {% csrf_token %}
+          <button type="submit" class="px-5 py-2.5 rounded-xl font-semibold text-xs transition-all flex items-center gap-2
+            {% if is_completed %}bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100{% else %}bg-brand-600 hover:bg-brand-700 text-white shadow-md{% endif %}">
+            {% if is_completed %}
+            <i class="bi bi-check-circle-fill"></i> Completed
+            {% else %}
+            <i class="bi bi-circle"></i> Mark as Completed
+            {% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Layout Grid: Main Content + Curriculum Sidebar -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Main Content (Col 3) -->
+      <div class="lg:col-span-3 space-y-6">
+        
+        <div class="bg-white rounded-3xl border border-gray-100 p-8 sm:p-10 shadow-sm space-y-8">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+              {{ lesson.title }}
+            </h1>
+            {% if lesson.short_description %}
+            <p class="text-sm text-gray-500 mt-2">{{ lesson.short_description }}</p>
+            {% endif %}
+          </div>
+
+          <!-- Video Section (If provided) -->
+          {% if lesson.video_url %}
+          <div class="rounded-2xl overflow-hidden bg-black aspect-video shadow-md">
+            {% if "youtube.com/watch?v=" in lesson.video_url or "youtu.be/" in lesson.video_url %}
+              <!-- Safe YouTube embed calculation -->
+              <iframe class="w-full h-full"
+                src="{{ lesson.video_url|cut:'watch?v='|cut:'https://www.youtube.com/'|cut:'https://youtu.be/' }}"
+                title="{{ lesson.title }}" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+            {% else %}
+              <div class="w-full h-full flex flex-col items-center justify-center text-white/70 p-6 text-center">
+                <i class="bi bi-play-btn text-5xl mb-2"></i>
+                <a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="text-xs text-brand-300 underline font-medium">
+                  Open External Video Lecture &rarr;
+                </a>
+              </div>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Formatted Educational Content -->
+          <div class="prose max-w-none text-gray-800 text-sm sm:text-base leading-relaxed space-y-4">
+            {{ lesson.lesson_content|linebreaks }}
+          </div>
+
+          <!-- Lesson Resources (If any) -->
+          {% if resources %}
+          <div class="pt-6 border-t border-gray-100 space-y-3">
+            <h4 class="font-bold text-gray-900 text-sm">Downloadable Notes & References</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {% for res in resources %}
+              <div class="p-3.5 rounded-xl border border-gray-100 bg-gray-50/70 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center text-xs">
+                    <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-800 truncate max-w-[180px]">{{ res.title }}</span>
+                </div>
+                <a href="{% url 'learning:download_resource' resource_id=res.id %}" class="text-xs font-bold text-brand-600 hover:text-brand-700">
+                  Download
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Next / Previous Lesson Navigation -->
+        <div class="flex items-center justify-between pt-2">
+          {% if prev_lesson %}
+          <a href="{% url 'learning:lesson_detail' course_slug=course.slug lesson_slug=prev_lesson.slug %}"
+             class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+            <i class="bi bi-arrow-left"></i> Previous: L{{ prev_lesson.ordering }}
+          </a>
+          {% else %}
+          <div></div>
+          {% endif %}
+
+          {% if next_lesson %}
+          <a href="{% url 'learning:lesson_detail' course_slug=course.slug lesson_slug=next_lesson.slug %}"
+             class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-xs font-bold text-white transition-colors shadow-md">
+            Next: L{{ next_lesson.ordering }} <i class="bi bi-arrow-right"></i>
+          </a>
+          {% else %}
+          <a href="{% url 'learning:course_detail' slug=course.slug %}"
+             class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white transition-colors shadow-md">
+            Course Overview <i class="bi bi-check-all"></i>
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <!-- Curriculum Sidebar (Col 1) -->
+      <div class="space-y-4">
+        <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 text-sm">Course Syllabus</h3>
+            <span class="text-xs text-gray-400">{{ lessons|length }} lessons</span>
+          </div>
+
+          <div class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+            {% for l in lessons %}
+            <a href="{% url 'learning:lesson_detail' course_slug=course.slug lesson_slug=l.slug %}"
+               class="flex items-center gap-3 p-3 rounded-xl transition-all text-xs
+               {% if l.id == lesson.id %}bg-brand-50 text-brand-700 font-bold border border-brand-200{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-[11px]
+                {% if l.id == lesson.id %}bg-brand-600 text-white{% else %}bg-gray-100 text-gray-500{% endif %}">
+                {{ l.ordering }}
+              </span>
+              <span class="truncate flex-1">{{ l.title }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

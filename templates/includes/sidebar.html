@@ -1,0 +1,21 @@
+<aside class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+  <div class="position-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house-door"></i> Home</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        </li>
+        {% if user.is_student %}
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-journal-bookmark"></i> My Courses (Phase 2)</a></li>
+        {% endif %}
+        {% if user.is_teacher %}
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-collection"></i> Manage Courses (Phase 2)</a></li>
+        {% endif %}
+      {% endif %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"><i class="bi bi-info-circle"></i> About</a></li>
+    </ul>
+  </div>
+</aside>

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Login – SmartEdu{% endblock %}
+{% block content %}
+<div class="min-h-[calc(100vh-4rem)] flex">
+  <!-- Left Panel — Branding -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 text-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-80 h-80 bg-brand-400/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center p-12 text-center">
+      <div class="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-8 border border-white/20">
+        <i class="bi bi-mortarboard-fill text-4xl"></i>
+      </div>
+      <h1 class="text-4xl font-extrabold mb-4">Welcome Back</h1>
+      <p class="text-brand-200 text-lg max-w-sm leading-relaxed">Access your personalized learning dashboard and continue where you left off.</p>
+      <div class="mt-10 flex gap-4 text-sm text-brand-300">
+        <div class="flex items-center gap-2"><i class="bi bi-shield-check text-emerald-400"></i> Secure</div>
+        <div class="flex items-center gap-2"><i class="bi bi-lightning text-amber-400"></i> Fast</div>
+        <div class="flex items-center gap-2"><i class="bi bi-heart text-pink-400"></i> Trusted</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel — Login Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="lg:hidden w-14 h-14 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <i class="bi bi-mortarboard-fill text-white text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900">Sign in to your account</h2>
+        <p class="text-gray-500 mt-2 text-sm">Enter your credentials to continue</p>
+      </div>
+
+      <form method="post" novalidate class="space-y-5">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 text-sm p-3 rounded-lg">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div>
+          <label for="id_username" class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}<p class="text-red-500 text-xs mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label for="id_password" class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+          {{ form.password }}
+          {% if form.password.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password.errors.0 }}</p>{% endif %}
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm">
+          Sign In
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-gray-500">
+        Don't have an account?
+        <a href="{% url 'accounts:student_register' %}" class="text-brand-600 font-semibold hover:text-brand-700">Sign up free</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+<nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+          <i class="bi bi-mortarboard-fill text-white text-lg"></i>
+        </div>
+        <span class="text-xl font-bold bg-gradient-to-r from-brand-600 to-brand-800 bg-clip-text text-transparent">SmartEdu</span>
+      </a>
+
+      <!-- Center Nav Links -->
+      <div class="hidden md:flex items-center gap-1">
+        <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">Home</a>
+        <a href="{% url 'learning:course_list' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">Courses</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">Dashboard</a>
+        {% if user.is_student %}
+        <a href="{% url 'learning:my_courses' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">My Courses</a>
+        {% elif user.is_teacher %}
+        <a href="{% url 'learning:teacher_course_list' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">Manage Courses</a>
+        {% endif %}
+        {% endif %}
+        <a href="{% url 'about' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all duration-200">About</a>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-3">
+        {% if user.is_authenticated %}
+        <div class="relative" id="userDropdown">
+          <button onclick="document.getElementById('userDropdown').classList.toggle('open')" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <div class="w-8 h-8 bg-gradient-to-br from-brand-400 to-brand-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+              {{ user.username|make_list|first|upper }}
+            </div>
+            <span class="hidden sm:inline text-sm font-medium text-gray-700">{{ user.get_full_name|default:user.username }}</span>
+            <i class="bi bi-chevron-down text-xs text-gray-400"></i>
+          </button>
+          <div class="user-dropdown-menu absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 opacity-0 invisible transition-all duration-200 z-50">
+            <a href="{% url 'accounts:profile' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="bi bi-person"></i> Profile</a>
+            {% if user.is_student %}
+            <a href="{% url 'learning:my_courses' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="bi bi-journal-check"></i> My Courses</a>
+            {% elif user.is_teacher %}
+            <a href="{% url 'learning:teacher_course_list' %}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="bi bi-collection"></i> Manage Courses</a>
+            {% endif %}
+            <div class="border-t border-gray-100 my-1"></div>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"><i class="bi bi-box-arrow-right"></i> Logout</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Log in</a>
+        <a href="{% url 'accounts:student_register' %}" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">Sign Up Free</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+<style>
+  #userDropdown.open .user-dropdown-menu { opacity:1; visibility:visible; transform:translateY(0); }
+  .user-dropdown-menu { transform:translateY(-8px); }
+</style>

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Attempt History: {{ quiz.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <a href="{% url 'learning:quiz_detail' quiz_id=quiz.id %}" class="inline-flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-semibold mb-2">
+          &larr; Back to {{ quiz.title }}
+        </a>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Your Attempt History</h1>
+        <p class="text-gray-500 text-sm mt-1">{{ course.title }} &bull; Passing criteria: {{ quiz.passing_percentage }}%</p>
+      </div>
+
+      <a href="{% url 'learning:quiz_take' quiz_id=quiz.id %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-md transition-all">
+        <i class="bi bi-play-circle-fill"></i> Retake Quiz
+      </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      {% if attempts %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="text-xs uppercase bg-gray-50 text-gray-500 border-b border-gray-100">
+            <tr>
+              <th class="py-4 px-6">Date & Time</th>
+              <th class="py-4 px-6">Score</th>
+              <th class="py-4 px-6">Percentage</th>
+              <th class="py-4 px-6">Status</th>
+              <th class="py-4 px-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for att in attempts %}
+            <tr class="hover:bg-gray-50/50">
+              <td class="py-4 px-6 text-gray-600 text-xs">{{ att.submitted_at|date:"M d, Y H:i" }}</td>
+              <td class="py-4 px-6 font-bold text-gray-900">{{ att.score }} / {{ att.total_questions }}</td>
+              <td class="py-4 px-6 font-bold text-gray-900">{{ att.percentage }}%</td>
+              <td class="py-4 px-6">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full {% if att.passed %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %}">
+                  {% if att.passed %}Passed{% else %}Failed{% endif %}
+                </span>
+              </td>
+              <td class="py-4 px-6 text-right">
+                <a href="{% url 'learning:quiz_result' attempt_id=att.id %}" class="text-xs font-bold text-brand-600 hover:text-brand-700">
+                  Review Answers &rarr;
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="p-12 text-center text-sm text-gray-500">
+        You have not submitted any attempts for this quiz yet.
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

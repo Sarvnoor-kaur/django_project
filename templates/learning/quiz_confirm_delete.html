@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Delete Quiz – {{ quiz.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center py-12 px-4">
+  <div class="max-w-md w-full bg-white rounded-3xl border border-gray-100 p-8 shadow-xl text-center space-y-6">
+    <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-3xl mx-auto">
+      <i class="bi bi-trash-fill"></i>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-bold text-gray-900">Delete Quiz</h2>
+      <p class="text-xs text-gray-500 mt-2">
+        Are you sure you want to permanently remove <strong>"{{ quiz.title }}"</strong>?
+      </p>
+      <p class="text-xs text-red-500 mt-1">All associated questions and student attempt records will be deleted.</p>
+    </div>
+
+    <form method="post" class="flex items-center justify-center gap-3 pt-2">
+      {% csrf_token %}
+      <a href="{% url 'learning:quiz_detail' quiz_id=quiz.id %}" class="px-5 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+        Cancel
+      </a>
+      <button type="submit" class="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md transition-all">
+        Yes, Delete Quiz
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

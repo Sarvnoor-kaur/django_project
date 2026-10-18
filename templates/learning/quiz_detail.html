@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}{{ quiz.title }} – {{ course.title }} | SmartEdu{% endblock %}
+
+{% block content %}
+<div class="bg-surface-50 min-h-screen py-10">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Header -->
+    <div>
+      <a href="{% url 'learning:course_detail' slug=course.slug %}" class="inline-flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-semibold mb-2">
+        &larr; Back to {{ course.title }}
+      </a>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
+            Assessment Module
+          </span>
+          <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mt-2">{{ quiz.title }}</h1>
+          <p class="text-gray-500 text-sm mt-1">{{ course.title }}</p>
+        </div>
+
+        {% if is_teacher_owner %}
+        <div class="flex items-center gap-2">
+          <a href="{% url 'learning:teacher_quiz_analytics' quiz_id=quiz.id %}" class="px-4 py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold text-xs transition-colors">
+            <i class="bi bi-graph-up mr-1"></i>Analytics
+          </a>
+          <a href="{% url 'learning:quiz_edit' quiz_id=quiz.id %}" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs transition-colors">
+            <i class="bi bi-pencil mr-1"></i>Edit
+          </a>
+          <a href="{% url 'learning:quiz_delete' quiz_id=quiz.id %}" class="px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-xs transition-colors">
+            <i class="bi bi-trash mr-1"></i>Delete
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Instructions / Rules Card -->
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-gray-100">
+        <div class="p-4 rounded-2xl bg-gray-50 text-center">
+          <span class="text-xs text-gray-400 font-semibold uppercase">Passing Score</span>
+          <div class="text-2xl font-extrabold text-emerald-600 mt-1">{{ quiz.passing_percentage }}%</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-gray-50 text-center">
+          <span class="text-xs text-gray-400 font-semibold uppercase">Total Questions</span>
+          <div class="text-2xl font-extrabold text-brand-600 mt-1">{{ quiz.total_questions_count }}</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-gray-50 text-center">
+          <span class="text-xs text-gray-400 font-semibold uppercase">Attempts</span>
+          <div class="text-2xl font-extrabold text-gray-800 mt-1">{{ attempts|length }}</div>
+        </div>
+      </div>
+
+      {% if quiz.description %}
+      <div>
+        <h3 class="text-sm font-bold text-gray-900 mb-1">Assessment Overview</h3>
+        <p class="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{{ quiz.description }}</p>
+      </div>
+      {% endif %}
+
+      {% if not is_teacher_owner %}
+      <div class="pt-2 text-center">
+        {% if quiz.total_questions_count > 0 %}
+        <a href="{% url 'learning:quiz_take' quiz_id=quiz.id %}"
+           class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all">
+          <i class="bi bi-play-circle-fill text-lg"></i>
+          {% if attempts %}Retake Assessment{% else %}Start Assessment Now{% endif %}
+        </a>
+        {% else %}
+        <p class="text-xs text-amber-600 font-semibold">This assessment does not contain questions yet.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Student Previous Attempts Section -->
+    {% if not is_teacher_owner and attempts %}
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-4">
+      <h3 class="font-bold text-gray-900 text-base">Your Previous Attempts</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="uppercase bg-gray-50 text-gray-500 border-b border-gray-100">
+            <tr>
+              <th class="py-3 px-4">Date</th>
+              <th class="py-3 px-4">Score</th>
+              <th class="py-3 px-4">Percentage</th>
+              <th class="py-3 px-4">Outcome</th>
+              <th class="py-3 px-4 text-right">Review</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for att in attempts %}
+            <tr>
+              <td class="py-3 px-4 text-gray-600">{{ att.submitted_at|date:"M d, Y H:i" }}</td>
+              <td class="py-3 px-4 font-bold text-gray-900">{{ att.score }}/{{ att.total_questions }}</td>
+              <td class="py-3 px-4 font-bold text-gray-900">{{ att.percentage }}%</td>
+              <td class="py-3 px-4">
+                <span class="px-2.5 py-0.5 rounded-full font-semibold {% if att.passed %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %}">
+                  {% if att.passed %}Passed{% else %}Failed{% endif %}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right">
+                <a href="{% url 'learning:quiz_result' attempt_id=att.id %}" class="text-brand-600 font-bold hover:underline">
+                  View Results &rarr;
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Teacher Question Management Section -->
+    {% if is_teacher_owner %}
+    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-gray-900 text-lg">Questions & Choices</h3>
+          <p class="text-xs text-gray-500">Configure multiple-choice questions and mark the single correct option.</p>
+        </div>
+        <a href="{% url 'learning:question_create' quiz_id=quiz.id %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-sm transition-all">
+          <i class="bi bi-plus-lg"></i> Add Question
+        </a>
+      </div>
+
+      {% if questions %}
+      <div class="space-y-4">
+        {% for q in questions %}
+        <div class="p-5 rounded-2xl border border-gray-100 bg-gray-50/50 space-y-3">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                {{ q.ordering }}
+              </span>
+              <div>
+                <h4 class="font-bold text-gray-900 text-sm">{{ q.question_text }}</h4>
+                {% if q.explanation %}
+                <p class="text-xs text-gray-500 mt-1"><i class="bi bi-info-circle mr-1"></i>{{ q.explanation }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a href="{% url 'learning:question_edit' question_id=q.id %}" class="p-1.5 text-xs text-gray-600 hover:text-gray-900">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form method="post" action="{% url 'learning:question_delete' question_id=q.id %}" onsubmit="return confirm('Delete this question?');">
+                {% csrf_token %}
+                <button type="submit" class="p-1.5 text-xs text-red-500 hover:text-red-700">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Choices List -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-9">
+            {% for choice in q.choices.all %}
+            <div class="p-2.5 rounded-xl border text-xs flex items-center justify-between
+              {% if choice.is_correct %}bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+              <span>{{ choice.choice_text }}</span>
+              {% if choice.is_correct %}
+              <span class="text-[11px] text-emerald-600 font-bold"><i class="bi bi-check-circle-fill mr-1"></i>Correct</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="p-10 text-center rounded-2xl border border-dashed border-gray-200 text-sm text-gray-500 space-y-2">
+        <p>No questions added to this quiz yet.</p>
+        <a href="{% url 'learning:question_create' quiz_id=quiz.id %}" class="inline-block text-xs text-brand-600 font-bold hover:underline">
+          + Add your first multiple choice question
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
