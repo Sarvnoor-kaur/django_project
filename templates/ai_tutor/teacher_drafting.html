@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Drafting Studio for Instructors — SmartEdu{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+        <a href="{% url 'teacher_dashboard' %}" class="hover:text-indigo-600">Dashboard</a>
+        <span>/</span>
+        <span class="text-slate-800 font-medium">AI Drafting Studio</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <h1 class="text-2xl font-bold text-slate-900">Teacher AI Drafting Studio</h1>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+          Instructor Assistant
+        </span>
+      </div>
+      <p class="text-sm text-slate-500 mt-1">
+        Generate editable draft summaries, key points, practice questions, and modular outlines based on your lesson materials.
+      </p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'ai_tutor:teacher_analytics' %}" class="inline-flex items-center px-4 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-medium rounded-xl transition shadow-sm">
+        Teacher Analytics
+      </a>
+      <a href="{% url 'learning:teacher_course_list' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 transition shadow-sm">
+        My Courses
+      </a>
+    </div>
+  </div>
+
+  <!-- Transparent Disclaimer Alert -->
+  <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start space-x-3 text-amber-800 text-xs leading-relaxed">
+    <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+    <div>
+      <strong class="font-bold">Human-in-the-Loop AI Assistant:</strong>
+      All outputs produced here are rule-based drafts. Drafts are never published or saved automatically to your lessons. You must review, refine, and copy or paste content into your lessons when satisfied.
+    </div>
+  </div>
+
+  {% if error_msg %}
+  <div class="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-xs font-medium">
+    {{ error_msg }}
+  </div>
+  {% endif %}
+
+  <!-- Main Studio Workspace Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Left Column: Generator Controls -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Tool 1: Existing Lesson Drafting -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mr-2 text-xs font-bold">1</span>
+          Draft From Your Existing Lesson
+        </h2>
+        <p class="text-xs text-slate-500">
+          Select one of your lessons to extract a grounded summary, key learning points, or revision questions.
+        </p>
+
+        <form method="POST" action="{% url 'ai_tutor:teacher_drafting' %}" class="space-y-4">
+          {% csrf_token %}
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Select Your Lesson</label>
+            <select name="lesson_id" class="w-full rounded-xl border border-slate-300 text-xs p-2.5 focus:ring-2 focus:ring-indigo-500" required>
+              <option value="">-- Choose a Lesson --</option>
+              {% for course in teacher_courses %}
+                <optgroup label="{{ course.title }}">
+                  {% for lesson in course.lessons.all %}
+                    <option value="{{ lesson.id }}" {% if selected_lesson and selected_lesson.id == lesson.id %}selected{% endif %}>
+                      {{ lesson.ordering }}. {{ lesson.title }} ({{ lesson.lesson_content|wordcount }} words)
+                    </option>
+                  {% empty %}
+                    <option disabled>No lessons in this course yet</option>
+                  {% endfor %}
+                </optgroup>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">Draft Type</label>
+            <div class="grid grid-cols-3 gap-2">
+              <label class="border border-slate-200 rounded-xl p-2.5 text-center cursor-pointer hover:bg-slate-50 text-xs flex flex-col items-center">
+                <input type="radio" name="action" value="summary" checked class="text-indigo-600 mb-1">
+                <span class="font-medium text-slate-800">Summary</span>
+              </label>
+              <label class="border border-slate-200 rounded-xl p-2.5 text-center cursor-pointer hover:bg-slate-50 text-xs flex flex-col items-center">
+                <input type="radio" name="action" value="key_points" class="text-indigo-600 mb-1">
+                <span class="font-medium text-slate-800">Key Points</span>
+              </label>
+              <label class="border border-slate-200 rounded-xl p-2.5 text-center cursor-pointer hover:bg-slate-50 text-xs flex flex-col items-center">
+                <input type="radio" name="action" value="questions" class="text-indigo-600 mb-1">
+                <span class="font-medium text-slate-800">Questions</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow transition">
+            Generate Lesson Draft &rarr;
+          </button>
+        </form>
+      </div>
+
+      <!-- Tool 2: New Topic Outline Generator -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mr-2 text-xs font-bold">2</span>
+          Draft Curriculum Outline by Topic
+        </h2>
+        <p class="text-xs text-slate-500">
+          Generate a modular 3-part curriculum syllabus based on core computer science subjects.
+        </p>
+
+        <form method="POST" action="{% url 'ai_tutor:teacher_drafting' %}" class="space-y-4">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="outline">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Topic or Subject Name</label>
+            <input
+              type="text"
+              name="topic_query"
+              placeholder="e.g. Relational Normalization, Operating Systems, Python OOP"
+              class="w-full rounded-xl border border-slate-300 text-xs p-2.5 focus:ring-2 focus:ring-purple-500"
+              required
+            >
+          </div>
+
+          <button type="submit" class="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs rounded-xl shadow transition">
+            Generate Curriculum Outline &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Editable Draft Workspace -->
+    <div class="lg:col-span-7">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col h-full min-h-[480px]">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">
+              {% if draft_title %}{{ draft_title }}{% else %}Editable Draft Workspace{% endif %}
+            </h2>
+            <span class="text-xs text-slate-400">Review, edit, or copy into your lesson editor</span>
+          </div>
+
+          {% if generated_draft %}
+          <button
+            type="button"
+            onclick="copyDraftToClipboard()"
+            id="copyBtn"
+            class="inline-flex items-center px-3.5 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-sm"
+          >
+            <svg class="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            Copy Draft
+          </button>
+          {% endif %}
+        </div>
+
+        <div class="flex-1 flex flex-col">
+          {% if generated_draft %}
+          <textarea
+            id="draftTextArea"
+            rows="18"
+            class="w-full flex-1 rounded-xl border border-slate-200 p-4 text-xs font-mono text-slate-800 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 resize-y leading-relaxed"
+          >{{ generated_draft }}</textarea>
+          <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+            <span>💡 Edit directly above, then paste into your lesson or quiz builder.</span>
+            {% if selected_lesson %}
+            <a href="{% url 'learning:lesson_edit' selected_lesson.course.slug selected_lesson.slug %}" class="text-indigo-600 font-semibold hover:underline">
+              Open Lesson Editor &rarr;
+            </a>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-slate-700">No Draft Generated Yet</h3>
+            <p class="text-xs text-slate-400 max-w-sm mt-1">
+              Select one of your lessons on the left to extract summaries and revision questions, or enter a topic to draft a curriculum outline.
+            </p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyDraftToClipboard() {
+    const textarea = document.getElementById('draftTextArea');
+    const copyBtn = document.getElementById('copyBtn');
+    if (textarea) {
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        copyBtn.textContent = 'Copied! ✓';
+        copyBtn.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+        setTimeout(() => {
+          copyBtn.innerHTML = `
+            <svg class="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            Copy Draft
+          `;
+          copyBtn.classList.remove('bg-emerald-50', 'text-emerald-700', 'border-emerald-200');
+        }, 2000);
+      });
+    }
+  }
+</script>
+{% endblock %}

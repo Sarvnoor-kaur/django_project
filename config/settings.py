@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "accounts",
     "core",
     "learning",
+    "ai_tutor",
 ]
 
 MIDDLEWARE = [

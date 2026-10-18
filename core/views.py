@@ -93,6 +93,9 @@ def student_dashboard(request):
         is_published=True
     ).select_related('course')[:4]
 
+    from ai_tutor.services.recommendations import get_student_recommendations
+    recommendations = get_student_recommendations(request.user)
+
     return render(request, 'core/student_dashboard.html', {
         'total_courses': enrollments.count(),
         'total_completed_lessons': total_completed_lessons,
@@ -101,6 +104,7 @@ def student_dashboard(request):
         'enrolled_courses': enrolled_courses_data,
         'recent_attempts': recent_attempts,
         'available_quizzes': available_quizzes,
+        'recommendations': recommendations,
     })
 
 

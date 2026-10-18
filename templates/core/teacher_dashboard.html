@@ -24,9 +24,11 @@
         </div>
         
         <div class="flex items-center gap-3">
-          <a href="{% url 'accounts:profile' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium transition-all duration-200">
-            <i class="bi bi-gear"></i>
-            Settings
+          <a href="{% url 'ai_tutor:teacher_drafting' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 backdrop-blur-md border border-purple-400/30 text-sm font-semibold text-purple-200 transition-all duration-200 shadow-sm">
+            <span>✨</span> AI Drafting Studio
+          </a>
+          <a href="{% url 'ai_tutor:teacher_analytics' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-sm font-medium transition-all duration-200">
+            <i class="bi bi-graph-up"></i> Analytics
           </a>
           <a href="{% url 'learning:course_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-600 hover:to-indigo-700 text-sm font-semibold shadow-md transition-all duration-200 text-white">
             <i class="bi bi-plus-lg"></i>

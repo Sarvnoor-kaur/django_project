@@ -11,6 +11,7 @@ urlpatterns = [
     # Local apps
     path('accounts/', include('accounts.urls')),
     path('learning/', include('learning.urls', namespace='learning')),
+    path('ai-tutor/', include('ai_tutor.urls', namespace='ai_tutor')),
     path('', include('core.urls')),          # core handles home, dashboard, etc.
 
     # Catch‑all for the root – redirect to home if someone lands on "/"

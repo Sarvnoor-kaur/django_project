@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Demo AI Tutor — SmartEdu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- Top Header with Badge -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-slate-200 gap-4">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-2xl font-bold text-slate-900">Demo AI Tutor</h1>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            Rule-Based Local Demo
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Fast, curriculum-grounded computer science study assistant. No paid external AI API or internet connection required.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-2">
+      <a href="{% url 'ai_tutor:new_conversation' %}" class="inline-flex items-center px-3.5 py-2 border border-indigo-600 text-xs font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        New Chat
+      </a>
+      <a href="{% url 'ai_tutor:conversation_history' %}" class="inline-flex items-center px-3.5 py-2 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition">
+        History
+      </a>
+      {% if request.user.is_teacher %}
+      <a href="{% url 'ai_tutor:teacher_drafting' %}" class="inline-flex items-center px-3.5 py-2 border border-purple-300 text-xs font-medium rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100 transition">
+        Teacher Drafting Studio
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Chat Container Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Sidebar: Recent Conversations & Topics -->
+    <div class="lg:col-span-1 space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Recent Chats</span>
+          <a href="{% url 'ai_tutor:conversation_history' %}" class="text-xs text-indigo-600 hover:underline">View All</a>
+        </div>
+        <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+          {% for conv in user_conversations %}
+          <div class="p-3 hover:bg-slate-50 transition flex items-center justify-between group {% if conversation and conversation.id == conv.id %}bg-indigo-50/70 border-l-4 border-indigo-600{% endif %}">
+            <a href="{% url 'ai_tutor:tutor_chat' conv.id %}" class="min-w-0 flex-1 block">
+              <p class="text-sm font-medium text-slate-800 truncate">{{ conv.title }}</p>
+              <p class="text-xs text-slate-400 mt-0.5">{{ conv.updated_at|date:"M d, H:i" }}</p>
+            </a>
+            <form action="{% url 'ai_tutor:delete_conversation' conv.id %}" method="POST" class="opacity-0 group-hover:opacity-100 transition ml-2">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Delete this conversation?')" class="text-slate-400 hover:text-red-500 p-1" title="Delete">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </form>
+          </div>
+          {% empty %}
+          <div class="p-4 text-center text-xs text-slate-400">
+            No previous conversations. Start your first one above!
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Supported Topics Quick Guide -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center">
+          <svg class="w-3.5 h-3.5 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          Supported Curriculums
+        </h3>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="insertPrompt('Explain normalization in DBMS')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">DBMS Normalization</button>
+          <button type="button" onclick="insertPrompt('Give me revision questions on Python')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">Python</button>
+          <button type="button" onclick="insertPrompt('Key points on Computer Networks')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">Networks</button>
+          <button type="button" onclick="insertPrompt('Explain deadlock in Operating Systems')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">Operating Systems</button>
+          <button type="button" onclick="insertPrompt('Explain Django MVT architecture')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">Django MVT</button>
+          <button type="button" onclick="insertPrompt('What is polymorphism in OOP?')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">OOP</button>
+          <button type="button" onclick="insertPrompt('Compare QuickSort and MergeSort in DSA')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">DSA</button>
+          <button type="button" onclick="insertPrompt('What are ACID properties in SQL?')" class="text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 px-2.5 py-1 rounded-full transition border border-slate-200">SQL & ACID</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chat Window -->
+    <div class="lg:col-span-3 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm min-h-[580px] h-[75vh]">
+      <!-- Chat Header -->
+      <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50/70 rounded-t-2xl flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-semibold text-sm text-slate-800">
+            {% if conversation %}{{ conversation.title }}{% else %}New Session{% endif %}
+          </span>
+        </div>
+
+        {% if context_lesson %}
+        <div class="flex items-center space-x-2 text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg border border-indigo-200">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
+          </svg>
+          <span class="font-medium">Active Lesson: {{ context_lesson.title }}</span>
+          <a href="{% url 'learning:lesson_detail' context_lesson.course.slug context_lesson.slug %}" class="underline hover:text-indigo-900 ml-1">Open Lesson &rarr;</a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Quick Action Toolbar for Lesson Context -->
+      {% if context_lesson %}
+      <div class="bg-indigo-50/40 px-4 py-2 border-b border-indigo-100 flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-indigo-800 font-semibold">Lesson AI Tools:</span>
+        <a href="{% url 'ai_tutor:lesson_ai_action' context_lesson.id 'summarize' %}" class="px-2.5 py-1 bg-white hover:bg-indigo-50 text-indigo-700 font-medium rounded border border-indigo-200 transition">
+          📝 Summarize Lesson
+        </a>
+        <a href="{% url 'ai_tutor:lesson_ai_action' context_lesson.id 'key_points' %}" class="px-2.5 py-1 bg-white hover:bg-indigo-50 text-indigo-700 font-medium rounded border border-indigo-200 transition">
+          🎯 Extract Key Points
+        </a>
+        <a href="{% url 'ai_tutor:lesson_ai_action' context_lesson.id 'questions' %}" class="px-2.5 py-1 bg-white hover:bg-indigo-50 text-indigo-700 font-medium rounded border border-indigo-200 transition">
+          ✍️ Revision Questions
+        </a>
+        <a href="{% url 'ai_tutor:lesson_ai_action' context_lesson.id 'next_steps' %}" class="px-2.5 py-1 bg-white hover:bg-indigo-50 text-indigo-700 font-medium rounded border border-indigo-200 transition">
+          🧭 What to Study Next
+        </a>
+      </div>
+      {% endif %}
+
+      <!-- Messages Stream Area -->
+      <div id="messagesContainer" class="flex-1 p-5 overflow-y-auto space-y-4">
+        {% for msg in chat_messages %}
+        {% if msg.role == 'user' %}
+        <!-- User Bubble -->
+        <div class="flex items-start justify-end space-x-2">
+          <div class="max-w-xl bg-indigo-600 text-white rounded-2xl rounded-tr-none px-4 py-3 shadow-sm">
+            <p class="text-sm whitespace-pre-wrap">{{ msg.content }}</p>
+            <span class="text-[10px] text-indigo-200 mt-1 block text-right">{{ msg.created_at|date:"H:i" }}</span>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs shrink-0">
+            {{ request.user.username|first|upper }}
+          </div>
+        </div>
+        {% else %}
+        <!-- Assistant Bubble -->
+        <div class="flex items-start space-x-2">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center text-xs shadow shrink-0">
+            🤖
+          </div>
+          <div class="max-w-2xl bg-slate-50 border border-slate-200 text-slate-800 rounded-2xl rounded-tl-none px-4 py-3.5 shadow-sm">
+            <div class="text-xs font-semibold text-indigo-600 mb-1 flex items-center justify-between">
+              <span>SmartEdu AI Tutor</span>
+              <span class="text-[10px] text-slate-400 font-normal">{{ msg.created_at|date:"H:i" }}</span>
+            </div>
+            <div class="text-sm prose prose-sm max-w-none text-slate-800 whitespace-pre-wrap leading-relaxed">{{ msg.content }}</div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Input Form -->
+      <div class="p-4 border-t border-slate-200 bg-white rounded-b-2xl">
+        <form id="chatForm" action="{% url 'ai_tutor:send_message' conversation.id %}" method="POST" class="space-y-2">
+          {% csrf_token %}
+          <div class="flex items-end space-x-2">
+            <div class="flex-1 relative">
+              <textarea
+                id="messageInput"
+                name="message"
+                rows="2"
+                maxlength="1000"
+                placeholder="Ask an educational question, or type 'Explain normalization', 'Key points on OS'..."
+                class="w-full rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-3 text-sm resize-none shadow-sm"
+                required
+              ></textarea>
+              <div class="text-[10px] text-slate-400 absolute right-3 bottom-2" id="charCount">0/1000</div>
+            </div>
+            <button
+              type="submit"
+              class="h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold flex items-center justify-center shadow-md transition shrink-0"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-scroll chat to bottom
+  const container = document.getElementById('messagesContainer');
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // Quick prompt inserter
+  function insertPrompt(text) {
+    const input = document.getElementById('messageInput');
+    if (input) {
+      input.value = text;
+      input.focus();
+      updateCharCount();
+    }
+  }
+
+  // Character counter
+  const input = document.getElementById('messageInput');
+  const countLabel = document.getElementById('charCount');
+  function updateCharCount() {
+    if (input && countLabel) {
+      countLabel.textContent = `${input.value.length}/1000`;
+    }
+  }
+  if (input) {
+    input.addEventListener('input', updateCharCount);
+    // Submit on Enter (unless Shift+Enter)
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chatForm').submit();
+      }
+    });
+  }
+</script>
+{% endblock %}
