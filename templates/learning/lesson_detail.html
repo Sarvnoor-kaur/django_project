@@ -59,18 +59,17 @@
 
           <!-- Video Section (If provided) -->
           {% if lesson.video_url %}
-          <div class="rounded-2xl overflow-hidden bg-black aspect-video shadow-md">
-            {% if "youtube.com/watch?v=" in lesson.video_url or "youtu.be/" in lesson.video_url %}
-              <!-- Safe YouTube embed calculation -->
+          <div class="rounded-2xl overflow-hidden bg-slate-900 aspect-video shadow-md">
+            {% if "youtube.com" in lesson.video_url or "youtu.be" in lesson.video_url %}
               <iframe class="w-full h-full"
-                src="{{ lesson.video_url|cut:'watch?v='|cut:'https://www.youtube.com/'|cut:'https://youtu.be/' }}"
+                src="https://www.youtube.com/embed/{{ lesson.video_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/'|cut:'https://m.youtube.com/watch?v=' }}"
                 title="{{ lesson.title }}" frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
             {% else %}
               <div class="w-full h-full flex flex-col items-center justify-center text-white/70 p-6 text-center">
-                <i class="bi bi-play-btn text-5xl mb-2"></i>
-                <a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="text-xs text-brand-300 underline font-medium">
+                <i class="bi bi-play-btn text-5xl mb-2 text-indigo-400"></i>
+                <a href="{{ lesson.video_url }}" target="_blank" rel="noopener noreferrer" class="text-xs text-indigo-300 underline font-medium">
                   Open External Video Lecture &rarr;
                 </a>
               </div>

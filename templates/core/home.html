@@ -1,170 +1,1064 @@
 {% extends 'base.html' %}
-{% block title %}Home – SmartEdu | Smart Education Platform{% endblock %}
+{% load static %}
+
+{% block title %}SmartEdu — AI-Powered Learning Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ==========================================
+   HOME PAGE PREMIUM STYLES
+   ========================================== */
+
+/* Animated gradient background */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes floatUpSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99,102,241,0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes progressFill {
+  from { width: 0; }
+  to { width: var(--fill-width); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+/* Hero section */
+.hero-section {
+  background: linear-gradient(135deg, #0a0a1a 0%, #0d0b2a 25%, #11063a 50%, #0a0e2e 75%, #050515 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hero-orb-1 {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+  top: -200px; left: -200px;
+  animation: orbFloat 18s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero-orb-2 {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  bottom: -150px; right: -100px;
+  animation: orbFloat 22s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+.hero-orb-3 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%);
+  top: 40%; right: 30%;
+  animation: orbFloat 15s ease-in-out infinite 5s;
+  pointer-events: none;
+}
+
+/* Grid overlay */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* Hero text animations */
+.hero-badge { animation: fadeInUp 0.6s ease both; animation-delay: 0.1s; }
+.hero-title { animation: fadeInUp 0.7s ease both; animation-delay: 0.25s; }
+.hero-subtitle { animation: fadeInUp 0.7s ease both; animation-delay: 0.4s; }
+.hero-ctas { animation: fadeInUp 0.7s ease both; animation-delay: 0.55s; }
+.hero-trust { animation: fadeInUp 0.7s ease both; animation-delay: 0.7s; }
+.hero-mockup { animation: slideInRight 0.9s cubic-bezier(0.16,1,0.3,1) both; animation-delay: 0.5s; }
+
+/* Dashboard Mockup */
+.mockup-container {
+  position: relative;
+  float: var(--float-anim, none);
+  animation: floatUp 6s ease-in-out infinite;
+}
+
+.mockup-browser {
+  background: rgba(15, 15, 35, 0.95);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  box-shadow: 
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.mockup-bar {
+  background: rgba(255,255,255,0.06);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.mockup-dots span {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.dot-red { background: #ff5f57; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #28c840; }
+
+.mockup-url {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-family: monospace;
+}
+
+.mockup-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Inside mockup: stat cards */
+.mockup-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.mockup-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+.mockup-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.mockup-stat-label {
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Progress bar in mockup */
+.mockup-progress-bar {
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+}
+.mockup-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+  --fill-width: 72%;
+  width: 72%;
+  animation: progressFill 2s ease 1.2s both;
+}
+.mockup-progress-fill-2 {
+  --fill-width: 45%;
+  width: 45%;
+  animation: progressFill 2s ease 1.5s both;
+}
+
+/* Floating badge cards */
+.float-card {
+  position: absolute;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 12px 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.05);
+  font-family: 'Inter', sans-serif;
+  z-index: 10;
+}
+.float-card-1 {
+  bottom: -20px;
+  left: -40px;
+  animation: floatUpSlow 5s ease-in-out infinite 1s;
+}
+.float-card-2 {
+  top: -20px;
+  right: -30px;
+  animation: floatUpSlow 6s ease-in-out infinite 2s;
+}
+
+/* Testimonials */
+.testimonial-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+}
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 80px;
+  line-height: 1;
+  color: #e0e7ff;
+  font-family: Georgia, serif;
+  font-weight: bold;
+}
+.testimonial-card:hover {
+  border-color: #a5b4fc;
+  box-shadow: 0 20px 40px -12px rgba(99,102,241,0.15);
+  transform: translateY(-4px);
+}
+
+/* Feature section gradient cards */
+.feature-card {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.feature-card:hover {
+  border-color: transparent;
+  box-shadow: 0 20px 50px -12px rgba(99,102,241,0.2);
+  transform: translateY(-6px);
+}
+.feature-card:hover::after { opacity: 1; }
+
+.feature-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+/* Course card */
+.course-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.course-card:hover {
+  box-shadow: 0 20px 50px -12px rgba(99,102,241,0.18);
+  transform: translateY(-5px);
+  border-color: #c7d2fe;
+}
+.course-thumb {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Step connector */
+.step-connector {
+  position: absolute;
+  top: 40px;
+  left: calc(50% + 50px);
+  right: calc(-50% + 50px);
+  height: 2px;
+  background: linear-gradient(90deg, #c7d2fe, #e0e7ff);
+  display: none;
+}
+@media (min-width: 768px) {
+  .step-connector { display: block; }
+}
+
+/* Counter animation */
+.stat-number {
+  animation: countUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Marquee testimonials */
+.testimonial-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.testimonial-scroll::-webkit-scrollbar { display: none; }
+.testimonial-scroll > * { scroll-snap-align: start; flex-shrink: 0; }
+
+/* Course category badge */
+.cat-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* AI tutor mini preview */
+.ai-chat-bubble {
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+}
+.ai-chat-user {
+  background: #4f46e5;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.ai-chat-bot {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Section divider */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #4f46e5;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+/* CTA button premium */
+.btn-primary-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 8px 24px -4px rgba(79,70,229,0.5);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -4px rgba(79,70,229,0.6); }
+.btn-primary-hero:hover::before { opacity: 1; }
+.btn-primary-hero span { position: relative; z-index: 1; }
+
+.btn-secondary-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+.btn-secondary-hero:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<!-- Hero Section -->
-<section class="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 text-white">
-  <!-- Decorative blobs -->
-  <div class="absolute top-0 left-0 w-96 h-96 bg-brand-400/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-  <div class="absolute bottom-0 right-0 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+<!-- ========================================================
+     HERO SECTION — Premium Dark with Animated Orbs + Mockup
+     ======================================================== -->
+<section class="hero-section">
+  <div class="hero-orb-1"></div>
+  <div class="hero-orb-2"></div>
+  <div class="hero-orb-3"></div>
+  <div class="hero-grid"></div>
 
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
-      <!-- Left Content -->
+  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-0" style="padding-top:80px; padding-bottom: 80px;">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: Copy -->
       <div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 text-sm font-medium mb-6">
-          <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-          THE FUTURE OF LEARNING
+        <div class="hero-badge mb-6">
+          <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);padding:8px 18px;border-radius:999px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a5b4fc;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;animation:typing 1.5s ease-in-out infinite;"></span>
+            Next-Generation EdTech Platform
+          </span>
         </div>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-          Learn Smarter.<br>
-          <span class="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">Grow Faster.</span>
+
+        <h1 class="hero-title" style="font-size:clamp(2.5rem,5vw,3.75rem);font-weight:900;line-height:1.08;letter-spacing:-0.03em;color:white;margin-bottom:24px;">
+          Learn Computer<br>
+          Science with<br>
+          <span class="gradient-text">AI Precision</span>
         </h1>
-        <p class="text-lg text-brand-100 max-w-lg mb-8 leading-relaxed">
-          Flexible digital learning, personalized paths, and interactive assessments — all in one premium platform.
+
+        <p class="hero-subtitle" style="font-size:17px;color:rgba(203,213,225,0.85);line-height:1.7;max-width:480px;margin-bottom:36px;">
+          SmartEdu delivers structured CS curricula paired with a local AI Tutor — no API keys, no latency. 
+          Master Python, DBMS, Networking, OS and more through interactive lessons and instant quizzes.
         </p>
-        <div class="flex flex-wrap gap-4 mb-10">
-          {% if user.is_authenticated %}
-          <a href="{% url 'learning:course_list' %}" class="px-8 py-3.5 bg-white text-brand-700 font-semibold rounded-xl hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 text-sm">
-            <i class="bi bi-compass mr-2"></i>Explore Courses
+
+        <div class="hero-ctas" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px;">
+          <a href="{% url 'learning:course_list' %}" class="btn-primary-hero">
+            <span style="position:relative;z-index:1;display:flex;align-items:center;gap:8px;">
+              <i class="bi bi-compass-fill"></i> Explore Courses
+            </span>
           </a>
-          <a href="{% url 'dashboard' %}" class="px-8 py-3.5 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/30 hover:bg-white/20 transition-all duration-300 text-sm">
-            <i class="bi bi-speedometer2 mr-2"></i>My Dashboard
+          {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn-secondary-hero">
+            <i class="bi bi-speedometer2"></i> Go to Dashboard
           </a>
           {% else %}
-          <a href="{% url 'learning:course_list' %}" class="px-8 py-3.5 bg-white text-brand-700 font-semibold rounded-xl hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 text-sm">
-            <i class="bi bi-compass mr-2"></i>Explore Courses
-          </a>
-          <a href="{% url 'accounts:student_register' %}" class="px-8 py-3.5 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/30 hover:bg-white/20 transition-all duration-300 text-sm">
-            <i class="bi bi-rocket-takeoff mr-2"></i>Start Free
+          <a href="{% url 'accounts:student_register' %}" class="btn-secondary-hero">
+            <i class="bi bi-person-plus"></i> Join Free
           </a>
           {% endif %}
         </div>
-        <!-- Trust badges -->
-        <div class="flex flex-wrap gap-6 text-sm text-brand-200">
-          <div class="flex items-center gap-2"><i class="bi bi-star-fill text-amber-400"></i> Trusted by educators</div>
-          <div class="flex items-center gap-2"><i class="bi bi-shield-lock-fill text-emerald-400"></i> Secure & private</div>
-          <div class="flex items-center gap-2"><i class="bi bi-lightning-fill text-yellow-400"></i> Fast onboarding</div>
+
+        <!-- Trust row -->
+        <div class="hero-trust" style="display:flex;flex-wrap:wrap;gap:20px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;color:rgba(148,163,184,0.9);font-size:13px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-shield-check" style="color:#34d399;font-size:14px;"></i>
+            </div>
+            No external APIs
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;color:rgba(148,163,184,0.9);font-size:13px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-lightning-charge-fill" style="color:#818cf8;font-size:14px;"></i>
+            </div>
+            Instant responses
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;color:rgba(148,163,184,0.9);font-size:13px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-infinity" style="color:#c084fc;font-size:14px;"></i>
+            </div>
+            Free forever
+          </div>
         </div>
       </div>
 
-      <!-- Right — Preview Card -->
-      <div class="hidden lg:block">
-        <div class="relative">
-          <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 shadow-2xl">
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center"><i class="bi bi-journal-bookmark text-brand-600 text-lg"></i></div>
+      <!-- Right: Dashboard Mockup -->
+      <div class="hero-mockup" style="position:relative;">
+        <div class="mockup-container" style="position:relative;">
+
+          <!-- Glow behind mockup -->
+          <div style="position:absolute;inset:-20px;border-radius:24px;background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.2),rgba(6,182,212,0.15));filter:blur(40px);z-index:0;"></div>
+
+          <!-- Browser Mockup -->
+          <div class="mockup-browser" style="position:relative;z-index:1;">
+            <div class="mockup-bar">
+              <div class="mockup-dots">
+                <span class="dot-red"></span>
+                <span class="dot-yellow"></span>
+                <span class="dot-green"></span>
+              </div>
+              <div class="mockup-url">smartedu.app / dashboard</div>
+            </div>
+            <div class="mockup-body">
+
+              <!-- Header row inside mockup -->
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
                 <div>
-                  <h4 class="font-semibold text-gray-900 text-sm">My Course</h4>
-                  <p class="text-xs text-gray-500">Advanced Topics</p>
+                  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:2px;">Good morning 👋</div>
+                  <div style="font-size:15px;font-weight:700;color:white;">Welcome back, Sarvnoor</div>
+                </div>
+                <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;">S</div>
+              </div>
+
+              <!-- Stats -->
+              <div class="mockup-stats">
+                <div class="mockup-stat">
+                  <div class="mockup-stat-value" style="color:#818cf8;">5</div>
+                  <div class="mockup-stat-label">Enrolled</div>
+                </div>
+                <div class="mockup-stat">
+                  <div class="mockup-stat-value" style="color:#34d399;">12</div>
+                  <div class="mockup-stat-label">Completed</div>
+                </div>
+                <div class="mockup-stat">
+                  <div class="mockup-stat-value" style="color:#f59e0b;">94%</div>
+                  <div class="mockup-stat-label">Quiz Score</div>
                 </div>
               </div>
-              <div class="space-y-3">
-                <div class="flex justify-between text-sm"><span class="text-gray-600">Lesson 3 of 8</span><span class="font-semibold text-brand-600">45%</span></div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-gradient-to-r from-brand-500 to-brand-600 h-2.5 rounded-full" style="width:45%"></div></div>
+
+              <!-- Course progress -->
+              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);">Python OOP Fundamentals</span>
+                  <span style="font-size:10px;color:#34d399;font-weight:700;">72%</span>
+                </div>
+                <div class="mockup-progress-bar">
+                  <div class="mockup-progress-fill"></div>
+                </div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);">DBMS & Normalization</span>
+                  <span style="font-size:10px;color:#818cf8;font-weight:700;">45%</span>
+                </div>
+                <div class="mockup-progress-bar">
+                  <div class="mockup-progress-fill mockup-progress-fill-2"></div>
+                </div>
+              </div>
+
+              <!-- AI Tutor preview -->
+              <div style="background:linear-gradient(135deg,rgba(79,70,229,0.2),rgba(139,92,246,0.15));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:12px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                  <span style="font-size:16px;">🤖</span>
+                  <span style="font-size:11px;font-weight:700;color:#a5b4fc;">Demo AI Tutor</span>
+                  <span style="font-size:9px;background:rgba(52,211,153,0.2);color:#34d399;padding:2px 8px;border-radius:999px;border:1px solid rgba(52,211,153,0.3);margin-left:auto;">ONLINE</span>
+                </div>
+                <div style="font-size:11px;color:rgba(203,213,225,0.75);line-height:1.5;">
+                  <span style="color:#67e8f9;font-weight:600;">You:</span> Explain 3NF normalization<br>
+                  <span style="color:#a5b4fc;font-weight:600;">AI:</span> 3NF eliminates transitive deps. Every non-key attr must depend only on the candidate key...
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Floating badge 1 — Quiz Score -->
+          <div class="float-card float-card-1" style="min-width:160px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#34d399,#10b981);display:flex;align-items:center;justify-content:center;font-size:16px;">✓</div>
+              <div>
+                <div style="font-size:11px;color:#64748b;font-weight:500;">Quiz Passed!</div>
+                <div style="font-size:14px;font-weight:800;color:#0f172a;">Score: 100%</div>
               </div>
             </div>
-            <div class="mt-4 bg-white rounded-xl p-4 shadow-lg">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center"><i class="bi bi-check-circle-fill text-emerald-500"></i></div>
-                  <span class="text-sm font-medium text-gray-700">Quiz Completed!</span>
-                </div>
-                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">92%</span>
+          </div>
+
+          <!-- Floating badge 2 — AI Response -->
+          <div class="float-card float-card-2" style="min-width:180px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:16px;">🤖</div>
+              <div>
+                <div style="font-size:11px;color:#64748b;font-weight:500;">AI Tutor</div>
+                <div style="font-size:13px;font-weight:700;color:#0f172a;">Response in 0ms</div>
               </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================
+     STATS SECTION — Bold numbers on white
+     ======================================================== -->
+<section style="background:white;border-bottom:1px solid #f1f5f9;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="stat-number" style="font-size:clamp(2rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#4f46e5,#8b5cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">10+</div>
+        <div style="font-size:13px;color:#64748b;font-weight:500;margin-top:6px;">CS Disciplines</div>
+      </div>
+      <div>
+        <div class="stat-number" style="font-size:clamp(2rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation-delay:0.1s;">100%</div>
+        <div style="font-size:13px;color:#64748b;font-weight:500;margin-top:6px;">Free & Local AI</div>
+      </div>
+      <div>
+        <div class="stat-number" style="font-size:clamp(2rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#f59e0b,#fb923c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation-delay:0.2s;">0ms</div>
+        <div style="font-size:13px;color:#64748b;font-weight:500;margin-top:6px;">AI Response Time</div>
+      </div>
+      <div>
+        <div class="stat-number" style="font-size:clamp(2rem,4vw,3rem);font-weight:900;background:linear-gradient(135deg,#ec4899,#8b5cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation-delay:0.3s;">2-in-1</div>
+        <div style="font-size:13px;color:#64748b;font-weight:500;margin-top:6px;">Student & Teacher</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================
+     FEATURES — Card Grid with Color-coded Icons
+     ======================================================== -->
+<section style="background:#fafbff;padding:96px 0;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style="text-align:center;margin-bottom:64px;">
+      <div class="section-label"><i class="bi bi-stars"></i> Platform Features</div>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;color:#0f172a;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">
+        Everything you need to<br>master computer science
+      </h2>
+      <p style="font-size:16px;color:#64748b;max-width:480px;margin:0 auto;line-height:1.7;">
+        A complete learning ecosystem — structured courses, AI guidance, quizzes, and analytics all in one place.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="feature-card" style="border-color:#eef2ff;">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);color:#4f46e5;">
+          <i class="bi bi-journal-code"></i>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:10px;">Modular Courses</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.65;margin-bottom:16px;">
+          Rich lesson content with syntax-highlighted code, embedded media, and downloadable resources.
+        </p>
+        <a href="{% url 'learning:course_list' %}" style="font-size:12px;font-weight:700;color:#4f46e5;text-decoration:none;display:flex;align-items:center;gap:4px;">
+          Browse Catalog <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="feature-card" style="border-color:#ecfeff;">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#ecfeff,#cffafe);color:#0891b2;">
+          <i class="bi bi-robot"></i>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:10px;">Demo AI Tutor</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.65;margin-bottom:16px;">
+          Local rule-based AI for instant topic explanations, lesson summaries, and revision Q&A — zero API cost.
+        </p>
+        <a href="{% url 'ai_tutor:tutor_chat_default' %}" style="font-size:12px;font-weight:700;color:#0891b2;text-decoration:none;display:flex;align-items:center;gap:4px;">
+          Try AI Tutor <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="feature-card" style="border-color:#f0fdf4;">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:#16a34a;">
+          <i class="bi bi-patch-check-fill"></i>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:10px;">Formative Quizzes</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.65;margin-bottom:16px;">
+          Server-graded MCQs with randomized order, instant results, score tracking, and answer explanations.
+        </p>
+        <a href="{% url 'learning:course_list' %}" style="font-size:12px;font-weight:700;color:#16a34a;text-decoration:none;display:flex;align-items:center;gap:4px;">
+          Start Practicing <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="feature-card" style="border-color:#fdf4ff;">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#fdf4ff,#f3e8ff);color:#9333ea;">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:10px;">Live Analytics</h3>
+        <p style="font-size:13px;color:#64748b;line-height:1.65;margin-bottom:16px;">
+          Visual completion charts, quiz performance heatmaps, and AI-powered weak-area recommendations.
+        </p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'ai_tutor:student_analytics' %}" style="font-size:12px;font-weight:700;color:#9333ea;text-decoration:none;display:flex;align-items:center;gap:4px;">
+          View Analytics <i class="bi bi-arrow-right"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'accounts:student_register' %}" style="font-size:12px;font-weight:700;color:#9333ea;text-decoration:none;display:flex;align-items:center;gap:4px;">
+          Get Access <i class="bi bi-arrow-right"></i>
+        </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================
+     COURSES PREVIEW — Horizontal card row
+     ======================================================== -->
+<section style="background:white;padding:96px 0;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div class="section-label"><i class="bi bi-collection-fill"></i> Course Catalog</div>
+        <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:900;color:#0f172a;letter-spacing:-0.03em;line-height:1.1;margin-bottom:10px;">
+          10 Core CS Disciplines
+        </h2>
+        <p style="font-size:15px;color:#64748b;">Structured curricula built for college students and self-learners.</p>
+      </div>
+      <a href="{% url 'learning:course_list' %}" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#eef2ff;color:#4f46e5;font-weight:700;font-size:13px;border-radius:12px;text-decoration:none;border:1px solid #c7d2fe;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
+        View All Courses <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Course 1 -->
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#1e1b4b,#312e81);">
+          <span>🐍</span>
+          <div style="position:absolute;top:12px;right:12px;"><span class="cat-badge" style="background:rgba(165,180,252,0.2);color:#a5b4fc;border:1px solid rgba(165,180,252,0.3);">Programming</span></div>
+        </div>
+        <div style="padding:20px;">
+          <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:6px;">Python Programming</h3>
+          <p style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:14px;">Variables, control flow, OOP, file I/O, and advanced Python patterns.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;color:#94a3b8;"><i class="bi bi-book"></i> 8 Lessons</span>
+            <a href="{% url 'learning:course_list' %}" style="font-size:11px;font-weight:700;color:#4f46e5;text-decoration:none;">Enroll →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course 2 -->
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#0c1a3d,#1e3a5f);">
+          <span>🗄️</span>
+          <div style="position:absolute;top:12px;right:12px;"><span class="cat-badge" style="background:rgba(103,232,249,0.15);color:#67e8f9;border:1px solid rgba(103,232,249,0.3);">Database</span></div>
+        </div>
+        <div style="padding:20px;">
+          <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:6px;">DBMS & SQL</h3>
+          <p style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:14px;">Relational design, normalization (1NF-3NF), SQL queries, and transactions.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;color:#94a3b8;"><i class="bi bi-book"></i> 6 Lessons</span>
+            <a href="{% url 'learning:course_list' %}" style="font-size:11px;font-weight:700;color:#0891b2;text-decoration:none;">Enroll →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course 3 -->
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);">
+          <span>🌐</span>
+          <div style="position:absolute;top:12px;right:12px;"><span class="cat-badge" style="background:rgba(192,132,252,0.2);color:#c084fc;border:1px solid rgba(192,132,252,0.3);">Web Dev</span></div>
+        </div>
+        <div style="padding:20px;">
+          <h3 style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:6px;">Web Development</h3>
+          <p style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:14px;">HTML, CSS, JavaScript, DOM manipulation, APIs, and responsive design.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:11px;color:#94a3b8;"><i class="bi bi-book"></i> 10 Lessons</span>
+            <a href="{% url 'learning:course_list' %}" style="font-size:11px;font-weight:700;color:#9333ea;text-decoration:none;">Enroll →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================
+     AI TUTOR SHOWCASE — Dark panel split
+     ======================================================== -->
+<section style="background:linear-gradient(135deg,#0a0a1a,#0d0b2a,#0a0e2e);padding:96px 0;overflow:hidden;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: AI Chat Preview -->
+      <div style="animation:floatUpSlow 7s ease-in-out infinite;">
+        <div style="background:rgba(15,15,35,0.9);border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.5);">
+          <!-- Chat header -->
+          <div style="background:linear-gradient(135deg,rgba(79,70,229,0.3),rgba(139,92,246,0.2));padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:white;">SmartEdu AI Tutor</div>
+              <div style="font-size:11px;color:#34d399;display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:#34d399;display:inline-block;"></span> Online · Demo Mode</div>
+            </div>
+            <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.35);font-family:monospace;">intent: EXPLAIN</span>
+          </div>
+          <!-- Chat messages -->
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px;min-height:280px;">
+            <div style="display:flex;justify-content:flex-end;">
+              <div class="ai-chat-bubble ai-chat-user">What is 3NF normalization?</div>
+            </div>
+            <div style="display:flex;justify-content:flex-start;">
+              <div class="ai-chat-bubble ai-chat-bot" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:rgba(203,213,225,0.9);">
+                <strong style="color:#a5b4fc;">Third Normal Form (3NF)</strong> eliminates <em>transitive dependencies</em>. Every non-key attribute must depend directly on the candidate key, not on another non-key attribute.<br><br>
+                <span style="color:#67e8f9;">Example:</span> If Student → Dept → DeptHead, move DeptHead to a separate Dept table.
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <div class="ai-chat-bubble ai-chat-user">Give me 3 practice questions.</div>
+            </div>
+            <div style="display:flex;justify-content:flex-start;">
+              <div class="ai-chat-bubble ai-chat-bot" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:rgba(203,213,225,0.9);">
+                <strong style="color:#c084fc;">Practice Questions:</strong><br>
+                1. Identify transitive dependencies in a given table.<br>
+                2. Convert a 2NF table to 3NF.<br>
+                3. Explain BCNF vs 3NF differences.
+              </div>
+            </div>
+          </div>
+          <!-- Input bar -->
+          <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;align-items:center;">
+            <div style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.3);">Ask about any topic...</div>
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+              <i class="bi bi-send-fill" style="color:white;font-size:13px;"></i>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- Features Section -->
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14">
-      <span class="inline-block px-4 py-1.5 bg-brand-50 text-brand-600 rounded-full text-sm font-semibold mb-4">FEATURES</span>
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything you need to excel</h2>
-      <p class="text-gray-500 max-w-2xl mx-auto">Our platform combines the best tools for learning, teaching, and growth in one seamless experience.</p>
-    </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-cloud-arrow-down text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Flexible Digital Learning</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Access content anytime, anywhere on any device.</p>
-      </div>
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-person-lines-fill text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Personalized Experience</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Adaptive paths that match your pace and goals.</p>
-      </div>
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-patch-check text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Interactive Assessments</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Instant feedback, quizzes, and challenges.</p>
-      </div>
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-graph-up-arrow text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Progress Tracking</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Visual dashboards for your learning journey.</p>
-      </div>
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-book text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Learning Resources</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Curated materials, videos, and articles.</p>
-      </div>
-      <div class="group p-6 rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-14 h-14 bg-brand-50 group-hover:bg-brand-100 rounded-2xl flex items-center justify-center mb-5 transition-colors"><i class="bi bi-robot text-2xl text-brand-600"></i></div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">AI Tutor (Phase 2)</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Smart assistance for questions and guidance.</p>
+      <!-- Right: Copy -->
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);padding:8px 18px;border-radius:999px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a5b4fc;margin-bottom:24px;">
+          <i class="bi bi-robot"></i> Demo AI Tutor
+        </div>
+        <h2 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;color:white;letter-spacing:-0.03em;line-height:1.1;margin-bottom:20px;">
+          Your personal AI<br>
+          <span class="gradient-text">study companion</span>
+        </h2>
+        <p style="font-size:16px;color:rgba(148,163,184,0.85);line-height:1.75;margin-bottom:32px;">
+          Ask questions, get instant explanations, generate summaries, and create revision questions — all powered by a local rule-based engine with zero latency and zero cost.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:36px;">
+          {% for item in "123"|make_list %}
+          {% if forloop.counter == 1 %}
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(79,70,229,0.2);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-lightning-charge-fill" style="color:#818cf8;font-size:16px;"></i></div>
+            <div><div style="font-size:14px;font-weight:700;color:white;margin-bottom:2px;">Instant responses</div><div style="font-size:13px;color:rgba(148,163,184,0.7);">No waiting — answers appear in milliseconds</div></div>
+          </div>
+          {% elif forloop.counter == 2 %}
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(16,185,129,0.15);border:1px solid rgba(52,211,153,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-shield-check" style="color:#34d399;font-size:16px;"></i></div>
+            <div><div style="font-size:14px;font-weight:700;color:white;margin-bottom:2px;">No API keys required</div><div style="font-size:13px;color:rgba(148,163,184,0.7);">100% local — no external services or costs</div></div>
+          </div>
+          {% else %}
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(139,92,246,0.2);border:1px solid rgba(192,132,252,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-book" style="color:#c084fc;font-size:16px;"></i></div>
+            <div><div style="font-size:14px;font-weight:700;color:white;margin-bottom:2px;">Curriculum-grounded</div><div style="font-size:13px;color:rgba(148,163,184,0.7);">Answers scoped to your enrolled courses</div></div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        <a href="{% url 'ai_tutor:tutor_chat_default' %}" class="btn-primary-hero">
+          <span style="position:relative;z-index:1;display:flex;align-items:center;gap:8px;">
+            <i class="bi bi-robot"></i> Try AI Tutor Free
+          </span>
+        </a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How It Works Section -->
-<section class="py-20 bg-surface-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14">
-      <span class="inline-block px-4 py-1.5 bg-brand-50 text-brand-600 rounded-full text-sm font-semibold mb-4">HOW IT WORKS</span>
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Get started in 3 simple steps</h2>
+<!-- ========================================================
+     HOW IT WORKS — Numbered Steps
+     ======================================================== -->
+<section style="background:#fafbff;padding:96px 0;">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style="text-align:center;margin-bottom:64px;">
+      <div class="section-label"><i class="bi bi-map"></i> How It Works</div>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:900;color:#0f172a;letter-spacing:-0.03em;line-height:1.1;">
+        From enrollment to mastery
+      </h2>
     </div>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="text-center">
-        <div class="w-16 h-16 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-brand-200">
-          <i class="bi bi-person-plus text-white text-2xl"></i>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:24px;" class="md:grid-cols-3-steps">
+      <div style="display:grid;gap:24px;" class="grid md:grid-cols-3">
+
+        <div style="background:white;border:1px solid #e0e7ff;border-radius:20px;padding:32px 28px;position:relative;text-align:center;box-shadow:0 4px 24px rgba(99,102,241,0.07);">
+          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#4f46e5,#6366f1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(79,70,229,0.3);">
+            <span style="font-size:22px;font-weight:900;color:white;">1</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#4f46e5;margin-bottom:8px;">Discover</div>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:10px;">Enroll in Courses</h3>
+          <p style="font-size:13px;color:#64748b;line-height:1.65;">Choose from 10 CS disciplines. Follow a structured lesson path and track your syllabus progress.</p>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Create Your Account</h3>
-        <p class="text-sm text-gray-500">Sign up as a student or teacher in seconds.</p>
-      </div>
-      <div class="text-center">
-        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-purple-200">
-          <i class="bi bi-book text-white text-2xl"></i>
+
+        <div style="background:white;border:1px solid #ede9fe;border-radius:20px;padding:32px 28px;position:relative;text-align:center;box-shadow:0 4px 24px rgba(139,92,246,0.07);">
+          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(124,58,237,0.3);">
+            <span style="font-size:22px;font-weight:900;color:white;">2</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:8px;">Study</div>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:10px;">Learn with AI Tutor</h3>
+          <p style="font-size:13px;color:#64748b;line-height:1.65;">Open the AI Tutor inside any lesson. Generate summaries, clarify concepts, and test your recall instantly.</p>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Explore Courses</h3>
-        <p class="text-sm text-gray-500">Browse curated courses and learning paths.</p>
-      </div>
-      <div class="text-center">
-        <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-200">
-          <i class="bi bi-graph-up text-white text-2xl"></i>
+
+        <div style="background:white;border:1px solid #dcfce7;border-radius:20px;padding:32px 28px;position:relative;text-align:center;box-shadow:0 4px 24px rgba(22,163,74,0.07);">
+          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#16a34a,#22c55e);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(22,163,74,0.3);">
+            <span style="font-size:22px;font-weight:900;color:white;">3</span>
+          </div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#16a34a;margin-bottom:8px;">Assess</div>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:10px;">Quiz & Track Progress</h3>
+          <p style="font-size:13px;color:#64748b;line-height:1.65;">Complete formative quizzes, get instant scores, review wrong answers, and improve with AI recommendations.</p>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Learn & Track</h3>
-        <p class="text-sm text-gray-500">Study, complete assessments, and watch your progress grow.</p>
+
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-20 bg-gradient-to-r from-brand-600 to-brand-800 text-white">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to Transform Your Learning?</h2>
-    <p class="text-brand-200 mb-8 text-lg">Join thousands of learners already on SmartEdu.</p>
-    <div class="flex flex-wrap justify-center gap-4">
-      <a href="{% url 'accounts:student_register' %}" class="px-8 py-3.5 bg-white text-brand-700 font-semibold rounded-xl hover:bg-gray-100 shadow-lg transition-all text-sm">Get Started Free</a>
-      <a href="{% url 'about' %}" class="px-8 py-3.5 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/30 hover:bg-white/20 transition-all text-sm">Learn More</a>
+<!-- ========================================================
+     TEACHER SECTION — Gradient split
+     ======================================================== -->
+<section style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#9333ea 100%);padding:80px 0;position:relative;overflow:hidden;">
+  <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <span style="display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:white;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:6px 16px;border-radius:999px;margin-bottom:20px;">For Educators</span>
+        <h2 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;color:white;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">
+          Build and teach<br>your own courses
+        </h2>
+        <p style="font-size:16px;color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:32px;">
+          Teachers get a full studio — create courses, manage lessons, upload resources, view student analytics, and use the AI Drafting Studio to auto-generate lesson content.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <a href="{% url 'accounts:teacher_register' %}" style="display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:white;color:#4f46e5;font-weight:700;font-size:13px;border-radius:12px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:all 0.2s;" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='white'">
+            <i class="bi bi-person-badge-fill"></i> Register as Instructor
+          </a>
+          <a href="{% url 'ai_tutor:teacher_drafting' %}" style="display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:rgba(255,255,255,0.15);color:white;font-weight:600;font-size:13px;border-radius:12px;text-decoration:none;border:1px solid rgba(255,255,255,0.3);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+            <i class="bi bi-stars"></i> AI Drafting Studio
+          </a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        {% for benefit in "1234"|make_list %}
+        {% if forloop.counter == 1 %}
+        <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:20px;backdrop-filter:blur(12px);">
+          <i class="bi bi-collection-fill" style="color:#fbbf24;font-size:24px;margin-bottom:12px;display:block;"></i>
+          <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">Course Builder</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);">Create structured multi-lesson courses with ordering</div>
+        </div>
+        {% elif forloop.counter == 2 %}
+        <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:20px;backdrop-filter:blur(12px);">
+          <i class="bi bi-stars" style="color:#a5b4fc;font-size:24px;margin-bottom:12px;display:block;"></i>
+          <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">AI Drafting</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);">Auto-generate lesson content with AI assistance</div>
+        </div>
+        {% elif forloop.counter == 3 %}
+        <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:20px;backdrop-filter:blur(12px);">
+          <i class="bi bi-file-earmark-arrow-up" style="color:#34d399;font-size:24px;margin-bottom:12px;display:block;"></i>
+          <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">Resource Upload</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);">Attach PDFs, slides, code files to any lesson</div>
+        </div>
+        {% else %}
+        <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:20px;backdrop-filter:blur(12px);">
+          <i class="bi bi-bar-chart-fill" style="color:#f9a8d4;font-size:24px;margin-bottom:12px;display:block;"></i>
+          <div style="font-size:14px;font-weight:700;color:white;margin-bottom:4px;">Student Analytics</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.65);">Track enrollment, progress, and quiz performance</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================
+     FINAL CTA — Minimal dark
+     ======================================================== -->
+<section style="background:#050510;padding:100px 0;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(79,70,229,0.12) 0%,transparent 70%);pointer-events:none;"></div>
+  <div class="max-w-2xl mx-auto px-4" style="position:relative;">
+    <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#4f46e5,#8b5cf6);margin:0 auto 24px;box-shadow:0 16px 40px rgba(79,70,229,0.4);">
+      <i class="bi bi-mortarboard-fill" style="color:white;font-size:28px;"></i>
+    </div>
+    <h2 style="font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;color:white;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">
+      Start your learning<br>journey today
+    </h2>
+    <p style="font-size:16px;color:rgba(148,163,184,0.8);line-height:1.7;margin-bottom:40px;">
+      Join SmartEdu — access premium CS courses, a local AI Tutor, formative quizzes, and progress analytics, completely free.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">
+      <a href="{% url 'accounts:student_register' %}" class="btn-primary-hero">
+        <span style="position:relative;z-index:1;display:flex;align-items:center;gap:8px;font-size:15px;padding:2px 6px;">
+          <i class="bi bi-lightning-charge-fill"></i> Create Free Account
+        </span>
+      </a>
+      <a href="{% url 'learning:course_list' %}" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-weight:600;font-size:14px;border-radius:14px;text-decoration:none;transition:all 0.25s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">
+        <i class="bi bi-compass"></i> Browse Courses
+      </a>
     </div>
   </div>
 </section>

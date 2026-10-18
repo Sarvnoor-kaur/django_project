@@ -2,42 +2,42 @@
 {% block title %}Taking Assessment: {{ quiz.title }} | SmartEdu{% endblock %}
 
 {% block content %}
-<div class="bg-surface-50 min-h-screen py-10">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+<div class="bg-slate-50 min-h-screen py-8 sm:py-12">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
     
-    <!-- Header -->
-    <div class="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm space-y-3">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
+    <!-- Assessment Header -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
           Live Assessment
         </span>
-        <span class="text-xs font-semibold text-gray-500">
-          Passing mark: {{ quiz.passing_percentage }}%
+        <span class="text-xs font-semibold text-slate-500">
+          Passing mark: <strong class="text-slate-800">{{ quiz.passing_percentage }}%</strong>
         </span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">{{ quiz.title }}</h1>
-      <p class="text-xs text-gray-500">{{ course.title }} &bull; {{ questions|length }} Total Questions</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ quiz.title }}</h1>
+      <p class="text-xs text-slate-500">{{ course.title }} &bull; {{ questions|length }} Total Questions</p>
     </div>
 
     <!-- Quiz Submission Form -->
-    <form method="post" action="{% url 'learning:quiz_submit' quiz_id=quiz.id %}" id="quizForm" class="space-y-6">
+    <form method="post" action="{% url 'learning:quiz_submit' quiz_id=quiz.id %}" id="quizForm" class="space-y-5">
       {% csrf_token %}
 
       {% for q in questions %}
-      <div class="bg-white rounded-3xl border border-gray-100 p-6 sm:p-8 shadow-sm space-y-4">
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-sm space-y-4">
         <div class="flex items-start gap-3">
-          <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-indigo-100">
             {{ forloop.counter }}
           </span>
-          <h3 class="font-bold text-gray-900 text-base leading-snug">{{ q.question_text }}</h3>
+          <h3 class="font-bold text-slate-900 text-sm sm:text-base leading-snug">{{ q.question_text }}</h3>
         </div>
 
-        <div class="space-y-2.5 pt-2 pl-10">
+        <div class="space-y-2.5 pt-1">
           {% for choice in q.choices.all %}
-          <label class="flex items-center gap-3.5 p-4 rounded-2xl border border-gray-200 hover:border-brand-300 hover:bg-brand-50/30 cursor-pointer transition-all">
+          <label class="choice-card flex items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition-all min-h-[48px]">
             <input type="radio" name="question_{{ q.id }}" value="{{ choice.id }}"
-                   class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-gray-300">
-            <span class="text-sm text-gray-800">{{ choice.choice_text }}</span>
+                   class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 choice-radio shrink-0">
+            <span class="text-xs sm:text-sm text-slate-800 font-medium leading-relaxed">{{ choice.choice_text }}</span>
           </label>
           {% endfor %}
         </div>
@@ -45,13 +45,13 @@
       {% endfor %}
 
       <!-- Submit Footer -->
-      <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <a href="{% url 'learning:quiz_detail' quiz_id=quiz.id %}" class="text-xs font-semibold text-gray-500 hover:text-gray-800">
-          Cancel and return
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <a href="{% url 'learning:quiz_detail' quiz_id=quiz.id %}" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+          &larr; Cancel and return
         </a>
 
         <button type="submit" onclick="return confirm('Ready to submit your answers? Scores will be calculated immediately.');"
-                class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all">
+                class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all btn-shimmer">
           Submit Assessment &rarr;
         </button>
       </div>
@@ -59,4 +59,24 @@
 
   </div>
 </div>
+
+<script>
+  // Highlight active radio choice
+  document.querySelectorAll('.choice-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+      const parentGroup = this.closest('.space-y-2.5');
+      if (parentGroup) {
+        parentGroup.querySelectorAll('.choice-card').forEach(card => {
+          card.classList.remove('border-indigo-600', 'bg-indigo-50/60');
+          card.classList.add('border-slate-200');
+        });
+        const currentCard = this.closest('.choice-card');
+        if (currentCard) {
+          currentCard.classList.add('border-indigo-600', 'bg-indigo-50/60');
+          currentCard.classList.remove('border-slate-200');
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}
